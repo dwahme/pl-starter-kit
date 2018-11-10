@@ -1,20 +1,26 @@
 structure AST : sig
 
   datatype term
-    = True
-    | False
-    (* your abstract syntax here! *)
+    = Wavy
+    | Wack
+    | Whatever
+    | Nah of term
+    | Yurrd of (term * term)
+    | Uh of (term * term)
 
   val isValue : term -> bool
 
 end = struct
 
   datatype term
-    = True
-    | False
-    (* your abstract syntax here! *)
+    = Wavy
+    | Wack
+    | Whatever
+    | Nah of term
+    | Yurrd of (term * term)
+    | Uh of (term * term)
 
-  fun isValue _ =
-    raise Fail "todo"
+  fun isValue (Wavy | Wack | Whatever) = true
+    | isValue _ = false
 
 end
