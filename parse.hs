@@ -66,13 +66,29 @@ parseBoolin = do
     skipSpaces
     Boolin <$> wavy `means` Wavy +++ wack `means` Wack +++ whatever `means` Whatever
 
-parseBoolExp :: ReadP BoolExp
-parseBoolExp = doubleOp where
-    doubleOp   = chainl1 singleOp (yurrd `means` Yurrd +++ uh `means` Uh)
-    singleOp   = prefix  expression (nah `means` Nah)
-    expression = parens  doubleOp <++ parseBoolin
+parseBoolSingleOp :: ReadP BoolExp
+parseBoolSingleOp = do
+    skipSpaces
+    op <- nah `means` Nah
+    exp1 <- parseBoolExp
+    return $ op exp1
 
--- Generates a bool top level expression
+parseBoolDoubleOp :: ReadP BoolExp
+parseBoolDoubleOp = do
+    skipSpaces
+    op <- (yurrd `means` Yurrd +++ uh `means` Uh)
+    exp1 <- parseBoolExp
+    exp2 <- parseBoolExp
+    return $ op exp1 exp2
+
+parseBoolOp :: ReadP BoolExp
+parseBoolOp = parseBoolSingleOp +++ parseBoolDoubleOp
+
+parseBoolExp :: ReadP BoolExp
+parseBoolExp = exp where
+    exp = parseBoolOp <++ parens exp <++ parseBoolin
+
+-- Generates a bool top level expression parser
 parseBoolTLE :: ReadP TopLevelExp
 parseBoolTLE = BoolTLE <$> parseBoolExp
 
