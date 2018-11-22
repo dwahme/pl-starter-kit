@@ -51,21 +51,21 @@ nah   = "Nah"
 yurrd = "Yurrd"
 uh    = "Uh"
 
+-- Generates a parser from a string and its operator
 means :: String -> a -> ReadP a
 name `means` meaning = skipSpaces *> string name *> pure meaning
 
+-- Parses parentheses grouping a function
 parens :: ReadP a -> ReadP a
 parens = between (skipSpaces *> char '(') (skipSpaces *> char ')')
 
-prefix :: ReadP a -> ReadP (a -> a) -> ReadP a
-prefix p op = result where
-  result = p <++ (op <*> result)
-
+-- Parses a simple Boolin type
 parseBoolin :: ReadP BoolExp
 parseBoolin = do
     skipSpaces
     Boolin <$> wavy `means` Wavy +++ wack `means` Wack +++ whatever `means` Whatever
 
+-- Parses a Boolin operation with one operand
 parseBoolSingleOp :: ReadP BoolExp
 parseBoolSingleOp = do
     skipSpaces
@@ -73,6 +73,7 @@ parseBoolSingleOp = do
     exp1 <- parseBoolExp
     return $ op exp1
 
+-- Parses a Boolin operation with two operands
 parseBoolDoubleOp :: ReadP BoolExp
 parseBoolDoubleOp = do
     skipSpaces
@@ -81,6 +82,7 @@ parseBoolDoubleOp = do
     exp2 <- parseBoolExp
     return $ op exp1 exp2
 
+-- Parses a Boolin operator and its operand(s)
 parseBoolOp :: ReadP BoolExp
 parseBoolOp = parseBoolSingleOp +++ parseBoolDoubleOp
 
@@ -88,7 +90,7 @@ parseBoolExp :: ReadP BoolExp
 parseBoolExp = exp where
     exp = parseBoolOp <++ parens exp <++ parseBoolin
 
--- Generates a bool top level expression parser
+-- Generates a Boolin top level expression parser
 parseBoolTLE :: ReadP TopLevelExp
 parseBoolTLE = BoolTLE <$> parseBoolExp
 
