@@ -114,4 +114,3 @@ parse str =
     (completeParses, incompleteParses) =
         partition (\(_, remaining) -> remaining == "") parses
     leastRemaning = minimumBy (comparing length) . map snd $ incompleteParses
-    
