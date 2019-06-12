@@ -1,6 +1,6 @@
 module AST 
 (
-    AST,
+    AST(Var, Abs, App, Unit),
     isVal
 )
 where
