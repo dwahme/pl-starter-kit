@@ -4,6 +4,7 @@ import System.Environment
 
 import AST
 import Scan
+import Type
 
 main :: IO ()
 main = do
