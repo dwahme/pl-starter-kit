@@ -1,18 +1,18 @@
 module AST 
 (
-    Ast,
+    AST,
     isVal
 )
 where
 
-data Ast
+data AST
     = Var String
-    | Abs String Ast
-    | App Ast Ast
+    | Abs String AST
+    | App AST AST
     | Unit
     deriving (Show)
 
-isVal :: Ast -> Bool
+isVal :: AST -> Bool
 isVal (Abs _ _) = True
 isVal Unit = True
 isVal _ = False
