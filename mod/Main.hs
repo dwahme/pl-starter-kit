@@ -2,6 +2,7 @@ module Main where
 
 import System.Environment
 
+import AST
 import Scan
 
 main :: IO ()
