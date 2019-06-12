@@ -3,6 +3,7 @@ module Main where
 import System.Environment
 
 import AST
+import SAST
 import Scan
 import Type
 
