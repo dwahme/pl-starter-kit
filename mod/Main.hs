@@ -12,4 +12,4 @@ main :: IO ()
 main = do
     [f] <- getArgs
     s   <- readFile f
-    print (parseAST s)
+    print (parseSAST s)

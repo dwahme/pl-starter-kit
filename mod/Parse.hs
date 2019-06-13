@@ -1,54 +1,56 @@
 module Parse 
 (
-    parseAST
+    parseSAST
 )
 where
 
 import Text.Parsec
 import Text.Parsec.String (Parser)
-import AST
+import SAST
 
-getUnit :: Parser AST
+getUnit :: Parser SAST
 getUnit = do
     between (char '(') (char ')') $ try spaces
     return Unit
 
-getVar :: Parser AST
+getVar :: Parser SAST
 getVar = do
-    fst <- letter
+    fst <- letter <|> char '_'
     rst <- many (alphaNum <|> char '_')
     return $ Var (fst:rst)
 
-getLambda :: Parser AST
+getLambda :: Parser SAST
 getLambda = do
     char '\\'
     try spaces
     Var var <- getVar
-    try spaces
-    string "=>"
-    try spaces
-    exp <- getAST
+    between (try spaces) (try spaces) (string "=>")
+    exp <- getSAST
     return $ Abs var exp
 
-inParens :: Parser AST
+inParens :: Parser SAST
 inParens = do
-    ast <- between (char '(') (char ')') getAST
-    return ast
+    sast <- between (char '(') (char ')') getSAST
+    return sast
 
-getAST :: Parser AST
-getAST = do
+getSAST :: Parser SAST
+getSAST = do
     try spaces
-    ast <- try getUnit <|> inParens <|> getLambda <|> getVar
+    exp:exps <- flip sepEndBy1 spaces $ 
+        try getUnit <|> 
+        try inParens <|> 
+        try getLambda <|> 
+        getVar
     try spaces
-    return ast
+    return $ foldl (\a b -> App a b) exp exps
 
-parser :: Parser AST
+parser :: Parser SAST
 parser = do
-    ast <- getAST
+    sast <- getSAST
     eof
-    return ast
+    return sast
 
-parseAST :: String -> AST
-parseAST s = case parse parser "" s of
+parseSAST :: String -> SAST
+parseSAST s = case parse parser "" s of
     Left err -> error $ show err
-    Right ast -> ast
+    Right sast -> sast
