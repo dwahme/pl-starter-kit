@@ -1,6 +1,6 @@
-module Scan 
+module Parse 
 (
-    scan
+    parseAST
 )
 where
 
@@ -30,13 +30,13 @@ getAST = do
     try spaces
     return ast
 
-scanner :: Parser AST
-scanner = do
+parser :: Parser AST
+parser = do
     ast <- getAST
     eof
     return ast
 
-scan :: String -> AST
-scan s = case parse scanner "" s of
+parseAST :: String -> AST
+parseAST s = case parse scanner "" s of
     Left err -> error $ show err
     Right ast -> ast
