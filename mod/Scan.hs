@@ -33,7 +33,7 @@ getAST = do
 scanner :: Parser AST
 scanner = do
     ast <- getAST
-    notFollowedBy anyToken
+    eof
     return ast
 
 scan :: String -> AST
