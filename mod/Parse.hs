@@ -6,27 +6,39 @@ where
 
 import Text.Parsec
 import Text.Parsec.String (Parser)
-import Text.Parsec.Error (messageString)
 import AST
 
 getUnit :: Parser AST
 getUnit = do
-    char '('
-    try spaces
-    char ')'
+    between (char '(') (char ')') $ try spaces
     return Unit
+
+getVar :: Parser AST
+getVar = do
+    fst <- letter
+    rst <- many (alphaNum <|> char '_')
+    return $ Var (fst:rst)
+
+getLambda :: Parser AST
+getLambda = do
+    char '\\'
+    try spaces
+    Var var <- getVar
+    try spaces
+    string "=>"
+    try spaces
+    exp <- getAST
+    return $ Abs var exp
 
 inParens :: Parser AST
 inParens = do
-    char '('
-    exp <- getAST
-    char ')'
-    return exp
+    ast <- between (char '(') (char ')') getAST
+    return ast
 
 getAST :: Parser AST
 getAST = do
     try spaces
-    ast <- try getUnit <|> inParens
+    ast <- try getUnit <|> inParens <|> getLambda <|> getVar
     try spaces
     return ast
 
