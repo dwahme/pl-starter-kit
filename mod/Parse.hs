@@ -37,6 +37,6 @@ parser = do
     return ast
 
 parseAST :: String -> AST
-parseAST s = case parse scanner "" s of
+parseAST s = case parse parser "" s of
     Left err -> error $ show err
     Right ast -> ast
