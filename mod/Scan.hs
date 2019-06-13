@@ -11,23 +11,29 @@ import AST
 
 getUnit :: Parser AST
 getUnit = do
+    char '('
     try spaces
-    string "()"
+    char ')'
     return Unit
 
 inParens :: Parser AST
 inParens = do
-    try spaces
     char '('
-    exp <- scanner
-    try spaces
+    exp <- getAST
     char ')'
     return exp
 
+getAST :: Parser AST
+getAST = do
+    try spaces
+    ast <- try getUnit <|> inParens
+    try spaces
+    return ast
+
 scanner :: Parser AST
 scanner = do
-    ast <- try getUnit <|> inParens
-    notFollowedBy $ anyToken
+    ast <- getAST
+    notFollowedBy anyToken
     return ast
 
 scan :: String -> AST
